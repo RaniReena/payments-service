@@ -26,7 +26,9 @@ class TokenizeRequestSerializer(serializers.Serializer):
     def validate(self, attrs):
         method = attrs.get("method")
         if not method:
-            method = "card" if attrs.get("number") else "bank" if attrs.get("account_number") else None
+            method = (
+                "card" if attrs.get("number") else "bank" if attrs.get("account_number") else None
+            )
         if method == "card":
             missing = [f for f in ("number", "exp_month", "exp_year", "cvv") if not attrs.get(f)]
             if missing:

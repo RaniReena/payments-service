@@ -4,13 +4,12 @@ from __future__ import annotations
 
 import json
 
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from . import services, signing, state
 from .models import Payment
@@ -51,13 +50,13 @@ class PaymentsView(APIView):
         data = serializer.validated_data
 
         try:
-            payment, created, body = services.create_payment(
+            _payment, created, body = services.create_payment(
                 amount_minor=data["amount_minor"],
                 currency=data["currency"],
                 payment_token=data["payment_token"],
                 idempotency_key=idempotency_key,
             )
-        except services.IdempotencyConflict:
+        except services.IdempotencyConflictError:
             return Response(
                 {
                     "error": "idempotency_key_reuse",
@@ -103,7 +102,7 @@ class PaymentReplayView(APIView):
     def post(self, request, pk):
         try:
             result = services.replay_payment(pk)
-        except services.PaymentNotFound:
+        except services.PaymentNotFoundError:
             return Response({"error": "not_found"}, status=status.HTTP_404_NOT_FOUND)
         return Response(result, status=status.HTTP_200_OK)
 
@@ -119,9 +118,7 @@ class ProcessorWebhookView(APIView):
         provided = request.headers.get("X-Processor-Signature")
         if not signing.is_valid_signature(raw_body, provided):
             # Reject without touching any state.
-            return Response(
-                {"error": "invalid_signature"}, status=status.HTTP_401_UNAUTHORIZED
-            )
+            return Response({"error": "invalid_signature"}, status=status.HTTP_401_UNAUTHORIZED)
 
         try:
             event = json.loads(raw_body)

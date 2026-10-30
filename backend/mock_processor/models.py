@@ -43,7 +43,7 @@ class ProcessorCharge(models.Model):
     currency = models.CharField(max_length=3)
 
     final_status = models.CharField(max_length=16)
-    failure_code = models.CharField(max_length=32, null=True, blank=True)
+    failure_code = models.CharField(max_length=32, null=True, blank=True)  # noqa: DJ001
     pending_delay_seconds = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 

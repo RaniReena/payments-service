@@ -117,6 +117,10 @@ ignore = [
   "ISC002",
   # Disable unused `noqa` directive
   "RUF100",
+  # RUF012: Django/DRF class attributes (model choices, Meta options,
+  # permission_classes, etc.) are conventionally plain lists; ClassVar
+  # annotations add noise without value.
+  "RUF012",
 ]
 line-length = 100
 indent-width = 4

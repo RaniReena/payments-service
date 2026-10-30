@@ -59,4 +59,4 @@ def get_client() -> ProcessorClient:
     return _client
 
 
-__all__ = ["ProcessorClient", "ChargeResult", "ChargeStatus", "ProcessorError", "get_client"]
+__all__ = ["ChargeResult", "ChargeStatus", "ProcessorClient", "ProcessorError", "get_client"]

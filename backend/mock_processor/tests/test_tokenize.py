@@ -55,7 +55,11 @@ class TokenizeEndpointTests(TestCase):
     def test_tokenize_bank(self):
         resp = self.client.post(
             reverse("mock_processor:tokenize"),
-            data={"method": "bank", "account_number": "000123456789", "routing_number": "110000000"},
+            data={
+                "method": "bank",
+                "account_number": "000123456789",
+                "routing_number": "110000000",
+            },
             content_type="application/json",
         )
         self.assertEqual(resp.status_code, 201)

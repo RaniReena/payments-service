@@ -29,7 +29,7 @@ from mock_processor.models import ProcessorCharge
 
 
 def _now_iso(offset_seconds: int = 0) -> str:
-    moment = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=offset_seconds)
+    moment = datetime.datetime.now(datetime.UTC) + datetime.timedelta(seconds=offset_seconds)
     return moment.isoformat().replace("+00:00", "Z")
 
 
@@ -105,7 +105,7 @@ class Command(BaseCommand):
     def _deliver(self, url: str, event: dict) -> None:
         body = json.dumps(event, separators=(",", ":"), sort_keys=True).encode("utf-8")
         signature = signing.sign(body)
-        request = urllib.request.Request(
+        request = urllib.request.Request(  # noqa: S310
             url,
             data=body,
             method="POST",

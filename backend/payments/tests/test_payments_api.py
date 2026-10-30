@@ -68,9 +68,7 @@ class PaymentRetrievalTests(TestCase):
         resp, _ = helpers.create_payment(self.client, token)
         payment_id = resp.json()["id"]
 
-        detail = self.client.get(
-            reverse("payments:payment-detail", args=[payment_id])
-        )
+        detail = self.client.get(reverse("payments:payment-detail", args=[payment_id]))
         self.assertEqual(detail.status_code, 200)
         self.assertEqual(detail.json()["status"], "pending")
         self.assertEqual(len(detail.json()["ledger"]), 1)

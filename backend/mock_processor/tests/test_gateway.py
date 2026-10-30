@@ -6,20 +6,27 @@ from mock_processor.models import ProcessorToken
 
 class OutcomeMatrixTests(TestCase):
     def test_card_outcomes(self):
-        self.assertEqual(outcomes.outcome_for("card", "0002"),
-                         outcomes.Outcome("failed", "card_declined", 0))
-        self.assertEqual(outcomes.outcome_for("card", "0119"),
-                         outcomes.Outcome("failed", "processor_error", 0))
-        self.assertEqual(outcomes.outcome_for("card", "0341"),
-                         outcomes.Outcome("succeeded", None, 15))
-        self.assertEqual(outcomes.outcome_for("card", "9999"),
-                         outcomes.Outcome("succeeded", None, 0))
+        self.assertEqual(
+            outcomes.outcome_for("card", "0002"), outcomes.Outcome("failed", "card_declined", 0)
+        )
+        self.assertEqual(
+            outcomes.outcome_for("card", "0119"), outcomes.Outcome("failed", "processor_error", 0)
+        )
+        self.assertEqual(
+            outcomes.outcome_for("card", "0341"), outcomes.Outcome("succeeded", None, 15)
+        )
+        self.assertEqual(
+            outcomes.outcome_for("card", "9999"), outcomes.Outcome("succeeded", None, 0)
+        )
 
     def test_bank_outcomes(self):
-        self.assertEqual(outcomes.outcome_for("bank", "0002"),
-                         outcomes.Outcome("failed", "insufficient_funds", 0))
-        self.assertEqual(outcomes.outcome_for("bank", "0119"),
-                         outcomes.Outcome("failed", "processor_error", 0))
+        self.assertEqual(
+            outcomes.outcome_for("bank", "0002"),
+            outcomes.Outcome("failed", "insufficient_funds", 0),
+        )
+        self.assertEqual(
+            outcomes.outcome_for("bank", "0119"), outcomes.Outcome("failed", "processor_error", 0)
+        )
 
 
 class GatewayChargeTests(TestCase):

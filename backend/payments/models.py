@@ -37,7 +37,7 @@ class Payment(IndexedTimeStampedModel):
     last4 = models.CharField(max_length=4, blank=True)
     brand_or_bank_type = models.CharField(max_length=32, blank=True)
 
-    processor_reference = models.CharField(max_length=64, unique=True, null=True, blank=True)
+    processor_reference = models.CharField(max_length=64, unique=True, null=True, blank=True)  # noqa: DJ001
 
     # Idempotency.
     idempotency_key = models.CharField(max_length=255, unique=True)
@@ -78,17 +78,15 @@ class LedgerEntry(IndexedTimeStampedModel):
         (state.REPLAY_REQUESTED, "Replay requested"),
     ]
 
-    payment = models.ForeignKey(
-        Payment, on_delete=models.PROTECT, related_name="ledger_entries"
-    )
+    payment = models.ForeignKey(Payment, on_delete=models.PROTECT, related_name="ledger_entries")
     event_type = models.CharField(max_length=32, choices=EVENT_TYPE_CHOICES)
     # The status reported by this event (pending / succeeded / failed).
     status = models.CharField(max_length=16, choices=Payment.STATUS_CHOICES)
-    failure_code = models.CharField(max_length=32, null=True, blank=True)
+    failure_code = models.CharField(max_length=32, null=True, blank=True)  # noqa: DJ001
 
     # Processor-supplied idempotency key. NULL for internally generated entries
     # (e.g. payment_created). Unique when present -> at-most-once processing.
-    event_id = models.CharField(max_length=128, null=True, blank=True)
+    event_id = models.CharField(max_length=128, null=True, blank=True)  # noqa: DJ001
 
     # When the event occurred at the processor (may differ from `created`).
     occurred_at = models.DateTimeField(null=True, blank=True)

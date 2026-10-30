@@ -27,7 +27,9 @@ class NoSensitiveDataTests(TestCase):
             data={"number": FULL_CARD, "exp_month": 12, "exp_year": 2099, "cvv": CVV},
             content_type="application/json",
         )
-        bank_token = helpers.tokenize_bank(self.client, account_number=FULL_ACCOUNT, routing=ROUTING)
+        bank_token = helpers.tokenize_bank(
+            self.client, account_number=FULL_ACCOUNT, routing=ROUTING
+        )
         card_token = helpers.tokenize_card(self.client)
 
         for token in (card_token, bank_token):

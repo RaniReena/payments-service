@@ -8,53 +8,148 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('created', model_utils.fields.AutoCreatedField(db_index=True, default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(db_index=True, default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('amount_minor', models.BigIntegerField(help_text='Amount in integer minor units (cents)')),
-                ('currency', models.CharField(default='USD', max_length=3)),
-                ('payment_token', models.CharField(max_length=64)),
-                ('method', models.CharField(blank=True, max_length=8)),
-                ('last4', models.CharField(blank=True, max_length=4)),
-                ('brand_or_bank_type', models.CharField(blank=True, max_length=32)),
-                ('processor_reference', models.CharField(blank=True, max_length=64, null=True, unique=True)),
-                ('idempotency_key', models.CharField(max_length=255, unique=True)),
-                ('request_fingerprint', models.CharField(max_length=64)),
-                ('response_snapshot', models.JSONField(blank=True, default=dict)),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('succeeded', 'succeeded'), ('failed', 'failed')], default='pending', max_length=16)),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        db_index=True,
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        db_index=True,
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                    ),
+                ),
+                (
+                    "amount_minor",
+                    models.BigIntegerField(help_text="Amount in integer minor units (cents)"),
+                ),
+                ("currency", models.CharField(default="USD", max_length=3)),
+                ("payment_token", models.CharField(max_length=64)),
+                ("method", models.CharField(blank=True, max_length=8)),
+                ("last4", models.CharField(blank=True, max_length=4)),
+                ("brand_or_bank_type", models.CharField(blank=True, max_length=32)),
+                (
+                    "processor_reference",
+                    models.CharField(blank=True, max_length=64, null=True, unique=True),
+                ),
+                ("idempotency_key", models.CharField(max_length=255, unique=True)),
+                ("request_fingerprint", models.CharField(max_length=64)),
+                ("response_snapshot", models.JSONField(blank=True, default=dict)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "pending"),
+                            ("succeeded", "succeeded"),
+                            ("failed", "failed"),
+                        ],
+                        default="pending",
+                        max_length=16,
+                    ),
+                ),
             ],
             options={
-                'indexes': [models.Index(fields=['status'], name='payments_pa_status_7ad4af_idx'), models.Index(fields=['created'], name='payments_pa_created_708743_idx')],
+                "indexes": [
+                    models.Index(fields=["status"], name="payments_pa_status_7ad4af_idx"),
+                    models.Index(fields=["created"], name="payments_pa_created_708743_idx"),
+                ],
             },
         ),
         migrations.CreateModel(
-            name='LedgerEntry',
+            name="LedgerEntry",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', model_utils.fields.AutoCreatedField(db_index=True, default=django.utils.timezone.now, editable=False, verbose_name='created')),
-                ('modified', model_utils.fields.AutoLastModifiedField(db_index=True, default=django.utils.timezone.now, editable=False, verbose_name='modified')),
-                ('event_type', models.CharField(choices=[('payment_created', 'Payment created'), ('processor_webhook', 'Processor webhook'), ('replay_requested', 'Replay requested')], max_length=32)),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('succeeded', 'succeeded'), ('failed', 'failed')], max_length=16)),
-                ('failure_code', models.CharField(blank=True, max_length=32, null=True)),
-                ('event_id', models.CharField(blank=True, max_length=128, null=True)),
-                ('occurred_at', models.DateTimeField(blank=True, null=True)),
-                ('payment', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='ledger_entries', to='payments.payment')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "created",
+                    model_utils.fields.AutoCreatedField(
+                        db_index=True,
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="created",
+                    ),
+                ),
+                (
+                    "modified",
+                    model_utils.fields.AutoLastModifiedField(
+                        db_index=True,
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="modified",
+                    ),
+                ),
+                (
+                    "event_type",
+                    models.CharField(
+                        choices=[
+                            ("payment_created", "Payment created"),
+                            ("processor_webhook", "Processor webhook"),
+                            ("replay_requested", "Replay requested"),
+                        ],
+                        max_length=32,
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "pending"),
+                            ("succeeded", "succeeded"),
+                            ("failed", "failed"),
+                        ],
+                        max_length=16,
+                    ),
+                ),
+                ("failure_code", models.CharField(blank=True, max_length=32, null=True)),
+                ("event_id", models.CharField(blank=True, max_length=128, null=True)),
+                ("occurred_at", models.DateTimeField(blank=True, null=True)),
+                (
+                    "payment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="ledger_entries",
+                        to="payments.payment",
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'ledger entries',
-                'ordering': ['id'],
-                'indexes': [models.Index(fields=['payment', 'id'], name='payments_le_payment_5f5a99_idx')],
-                'constraints': [models.UniqueConstraint(condition=models.Q(('event_id__isnull', False)), fields=('event_id',), name='uniq_ledger_event_id')],
+                "verbose_name_plural": "ledger entries",
+                "ordering": ["id"],
+                "indexes": [
+                    models.Index(fields=["payment", "id"], name="payments_le_payment_5f5a99_idx")
+                ],
+                "constraints": [
+                    models.UniqueConstraint(
+                        condition=models.Q(("event_id__isnull", False)),
+                        fields=("event_id",),
+                        name="uniq_ledger_event_id",
+                    )
+                ],
             },
         ),
     ]

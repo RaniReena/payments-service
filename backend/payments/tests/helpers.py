@@ -20,7 +20,7 @@ from mock_processor import validators
 
 def luhn_card_ending(last4: str, prefix: str = "4") -> str:
     fill = 16 - len(prefix) - len(last4)
-    for i in range(10 ** fill):
+    for i in range(10**fill):
         candidate = f"{prefix}{i:0{fill}d}{last4}"
         if validators.luhn_valid(candidate):
             return candidate
@@ -48,8 +48,9 @@ def tokenize_bank(client, account_number: str = "000123456789", routing: str = "
     return resp.json()["token"]
 
 
-def create_payment(client, token: str, amount_minor: int = 1000, key: str | None = None,
-                   currency: str = "USD"):
+def create_payment(
+    client, token: str, amount_minor: int = 1000, key: str | None = None, currency: str = "USD"
+):
     key = key or ("idem_" + secrets.token_hex(8))
     resp = client.post(
         reverse("payments:payments"),
@@ -65,8 +66,13 @@ def sign(body: bytes) -> str:
     return hmac.new(secret, body, hashlib.sha256).hexdigest()
 
 
-def make_event(reference: str, status: str, event_id: str | None = None,
-               failure_code: str | None = None, occurred_at: str = "2026-09-28T10:15:02.113Z") -> dict:
+def make_event(
+    reference: str,
+    status: str,
+    event_id: str | None = None,
+    failure_code: str | None = None,
+    occurred_at: str = "2026-09-28T10:15:02.113Z",
+) -> dict:
     return {
         "event_id": event_id or ("evt_" + secrets.token_hex(12)),
         "processor_reference": reference,

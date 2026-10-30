@@ -22,11 +22,11 @@ from .serializers import PaymentSerializer
 logger = logging.getLogger(__name__)
 
 
-class IdempotencyConflict(Exception):
+class IdempotencyConflictError(Exception):
     """Same Idempotency-Key reused with a different request body."""
 
 
-class PaymentNotFound(Exception):
+class PaymentNotFoundError(Exception):
     pass
 
 
@@ -41,20 +41,18 @@ def create_payment(*, amount_minor: int, currency: str, payment_token: str, idem
     existing payment is returned for a repeated idempotency key (in which case
     ``response_body`` is the original stored response).
 
-    Raises :class:`IdempotencyConflict` when the key is reused with a different
+    Raises :class:`IdempotencyConflictError` when the key is reused with a different
     body, and :class:`payments.processor.ProcessorError` on processor failure.
     """
     request_fingerprint = fingerprint(amount_minor, currency, payment_token)
 
     with transaction.atomic():
         existing = (
-            Payment.objects.select_for_update()
-            .filter(idempotency_key=idempotency_key)
-            .first()
+            Payment.objects.select_for_update().filter(idempotency_key=idempotency_key).first()
         )
         if existing is not None:
             if existing.request_fingerprint != request_fingerprint:
-                raise IdempotencyConflict()
+                raise IdempotencyConflictError()
             return existing, False, existing.response_snapshot
 
         payment = Payment(
@@ -89,7 +87,7 @@ def create_payment(*, amount_minor: int, currency: str, payment_token: str, idem
             # winner commits, then return its result (no second charge happened).
             winner = Payment.objects.select_for_update().get(idempotency_key=idempotency_key)
             if winner.request_fingerprint != request_fingerprint:
-                raise IdempotencyConflict() from None
+                raise IdempotencyConflictError() from None
             return winner, False, winner.response_snapshot
 
         return payment, True, payment.response_snapshot
@@ -147,7 +145,7 @@ def replay_payment(payment_id) -> dict:
         try:
             payment = Payment.objects.select_for_update().get(id=payment_id)
         except Payment.DoesNotExist as exc:
-            raise PaymentNotFound() from exc
+            raise PaymentNotFoundError() from exc
 
         LedgerEntry.objects.create(
             payment=payment,

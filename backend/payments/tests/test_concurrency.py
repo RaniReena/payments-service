@@ -14,6 +14,7 @@ from django.test import Client, TransactionTestCase
 from django.urls import reverse
 
 from mock_processor.models import ProcessorCharge
+
 from payments.models import LedgerEntry, Payment
 
 from . import helpers
@@ -41,7 +42,9 @@ class ConcurrentWebhookDeliveryTests(TransactionTestCase):
             try:
                 client = Client()
                 response = client.generic(
-                    "POST", url, body,
+                    "POST",
+                    url,
+                    body,
                     content_type="application/json",
                     HTTP_X_PROCESSOR_SIGNATURE=signature,
                 )
@@ -83,7 +86,9 @@ class ConcurrentPaymentCreationTests(TransactionTestCase):
             try:
                 client = Client()
                 response = client.generic(
-                    "POST", url, payload,
+                    "POST",
+                    url,
+                    payload,
                     content_type="application/json",
                     HTTP_IDEMPOTENCY_KEY=key,
                 )

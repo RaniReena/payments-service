@@ -16,6 +16,7 @@ Rules:
 
 from __future__ import annotations
 
+
 # Statuses
 PENDING = "pending"
 SUCCEEDED = "succeeded"

@@ -8,7 +8,7 @@ from mock_processor import validators
 def luhn_card_ending(last4: str, prefix: str = "4") -> str:
     """Return a 16-digit Luhn-valid number ending in ``last4``."""
     fill = 16 - len(prefix) - len(last4)
-    for i in range(10 ** fill):
+    for i in range(10**fill):
         candidate = f"{prefix}{i:0{fill}d}{last4}"
         if validators.luhn_valid(candidate):
             return candidate

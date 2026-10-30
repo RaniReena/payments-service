@@ -79,7 +79,8 @@ class WebhookProcessingTests(TestCase):
         helpers.post_webhook(self.client, helpers.make_event(self.reference, "succeeded"))
         self.assertEqual(self._status(), "succeeded")
         helpers.post_webhook(
-            self.client, helpers.make_event(self.reference, "failed", failure_code="processor_error")
+            self.client,
+            helpers.make_event(self.reference, "failed", failure_code="processor_error"),
         )
         # First terminal wins; a conflicting later terminal does not change status.
         self.assertEqual(self._status(), "succeeded")
@@ -92,5 +93,7 @@ class WebhookProcessingTests(TestCase):
         self.assertEqual(payment.derive_status(), "succeeded")
 
     def test_unknown_reference_returns_404(self):
-        resp = helpers.post_webhook(self.client, helpers.make_event("pr_does_not_exist", "succeeded"))
+        resp = helpers.post_webhook(
+            self.client, helpers.make_event("pr_does_not_exist", "succeeded")
+        )
         self.assertEqual(resp.status_code, 404)

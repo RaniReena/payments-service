@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     "django_guid",
     "common",
     "users",
+    "mock_processor",
+    "payments",
 ]
 
 MIDDLEWARE = [
@@ -257,3 +259,14 @@ DEFENDER_REDIS_URL = config("REDIS_URL")
 ADMIN_ENVIRONMENT_LABEL = config("ADMIN_ENVIRONMENT_LABEL", default="")
 ADMIN_ENVIRONMENT_COLOR = config("ADMIN_ENVIRONMENT_COLOR", default="#111827")
 ADMIN_ENVIRONMENT_BACKGROUND_COLOR = config("ADMIN_ENVIRONMENT_BACKGROUND_COLOR", default="#f59e0b")
+
+# Payments / mock processor
+# Shared secret used by the mock_processor to sign webhooks and by the payments
+# app to verify them. Must be overridden in any real environment.
+PROCESSOR_WEBHOOK_SECRET = config(
+    "PROCESSOR_WEBHOOK_SECRET", default="dev-insecure-processor-secret-change-me"
+)
+# Where the mock_processor delivers webhooks (used by simulate_webhooks).
+PROCESSOR_WEBHOOK_URL = config(
+    "PROCESSOR_WEBHOOK_URL", default="http://localhost:8000/webhooks/processor"
+)

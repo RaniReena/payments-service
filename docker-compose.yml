@@ -1,6 +1,6 @@
 services:
   db:
-    image: "postgres:alpine"
+    image: "postgres:16-alpine"
     environment:
       - POSTGRES_USER=config
       - POSTGRES_PASSWORD=password

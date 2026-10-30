@@ -1,0 +1,590 @@
+openapi: 3.0.3
+info:
+  title: Vinta Boilerplate API
+  version: 0.1.0
+  description: A Django project boilerplate with Vinta's best practices
+paths:
+  /api/payments:
+    get:
+      operationId: api_payments_retrieve
+      description: '``POST /api/payments`` to create; ``GET /api/payments`` to list.'
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_payments_create
+      description: '``POST /api/payments`` to create; ``GET /api/payments`` to list.'
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/payments/{id}:
+    get:
+      operationId: api_payments_retrieve_2
+      description: '``GET /api/payments/{id}`` -> current status and ledger history.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/payments/{id}/replay:
+    post:
+      operationId: api_payments_replay_create
+      description: '``POST /api/payments/{id}/replay`` -> admin-only safe replay.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/rest/rest-check/:
+    get:
+      operationId: api_rest_rest_check_retrieve
+      description: This endpoint checks if the REST API is working.
+      summary: Check REST API
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              examples:
+                SuccessfulResponse:
+                  value:
+                    message: This message comes from the backend. If you're seeing
+                      this, the REST API is working!
+                  summary: Successful Response
+          description: ''
+  /api/users/:
+    get:
+      operationId: api_users_list
+      parameters:
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+    post:
+      operationId: api_users_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/users/{id}/:
+    get:
+      operationId: api_users_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_users_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_users_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: api_users_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this user.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /processor/tokenize:
+    post:
+      operationId: processor_tokenize_create
+      description: Validate raw instrument data and return a non-sensitive token.
+      tags:
+      - processor
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenizeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenizeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenizeRequest'
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenizeResponse'
+          description: ''
+  /webhooks/processor:
+    post:
+      operationId: webhooks_processor_create
+      description: '``POST /webhooks/processor`` -> verify signature and apply the
+        event.'
+      tags:
+      - webhooks
+      security:
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    BankTypeEnum:
+      enum:
+      - checking
+      - savings
+      type: string
+      description: |-
+        * `checking` - checking
+        * `savings` - savings
+    EventTypeEnum:
+      enum:
+      - payment_created
+      - processor_webhook
+      - replay_requested
+      type: string
+      description: |-
+        * `payment_created` - Payment created
+        * `processor_webhook` - Processor webhook
+        * `replay_requested` - Replay requested
+    LedgerEntry:
+      type: object
+      properties:
+        sequence:
+          type: integer
+          readOnly: true
+        event_type:
+          $ref: '#/components/schemas/EventTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        failure_code:
+          type: string
+          nullable: true
+          maxLength: 32
+        event_id:
+          type: string
+          nullable: true
+          maxLength: 128
+        occurred_at:
+          type: string
+          format: date-time
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created
+      - event_type
+      - sequence
+      - status
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    MethodEnum:
+      enum:
+      - card
+      - bank
+      type: string
+      description: |-
+        * `card` - card
+        * `bank` - bank
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        is_active:
+          type: boolean
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        is_staff:
+          type: boolean
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        amount_minor:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: Amount in integer minor units (cents)
+        currency:
+          type: string
+          maxLength: 3
+        status:
+          type: string
+          readOnly: true
+        method:
+          type: string
+          maxLength: 8
+        last4:
+          type: string
+          maxLength: 4
+        brand_or_bank_type:
+          type: string
+          maxLength: 32
+        processor_reference:
+          type: string
+          nullable: true
+          maxLength: 64
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        ledger:
+          type: array
+          items:
+            $ref: '#/components/schemas/LedgerEntry'
+          readOnly: true
+      required:
+      - amount_minor
+      - created
+      - id
+      - ledger
+      - modified
+      - status
+    PaymentCreate:
+      type: object
+      properties:
+        amount_minor:
+          type: integer
+          minimum: 1
+        currency:
+          type: string
+          default: USD
+          maxLength: 3
+        payment_token:
+          type: string
+          maxLength: 64
+      required:
+      - amount_minor
+      - payment_token
+    StatusEnum:
+      enum:
+      - pending
+      - succeeded
+      - failed
+      type: string
+      description: |-
+        * `pending` - pending
+        * `succeeded` - succeeded
+        * `failed` - failed
+    TokenizeRequest:
+      type: object
+      properties:
+        method:
+          $ref: '#/components/schemas/MethodEnum'
+        number:
+          type: string
+          writeOnly: true
+        exp_month:
+          type: integer
+          writeOnly: true
+        exp_year:
+          type: integer
+          writeOnly: true
+        cvv:
+          type: string
+          writeOnly: true
+        account_number:
+          type: string
+          writeOnly: true
+        routing_number:
+          type: string
+          writeOnly: true
+        bank_type:
+          allOf:
+          - $ref: '#/components/schemas/BankTypeEnum'
+          default: checking
+    TokenizeResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        method:
+          type: string
+        last4:
+          type: string
+        brand_or_bank_type:
+          type: string
+      required:
+      - brand_or_bank_type
+      - last4
+      - method
+      - token
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        is_active:
+          type: boolean
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+        is_staff:
+          type: boolean
+          description: Designates whether the user can log into this admin site.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - created
+      - email
+      - id
+      - modified
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
